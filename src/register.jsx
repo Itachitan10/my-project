@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Register = () => {
   const [name, setName] = useState('');
+  const [pnumber , setnumber] = useState(0)
+  const [address ,setaddress ] = useState('')
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // para hindi mag-reload page
+    e.preventDefault();
 
     if (name && password) {
       fetch('http://localhost:4000/register', {
@@ -46,30 +48,18 @@ const Register = () => {
         ></div>
         <div className="w-1/2 p-10 flex flex-col justify-center gap-6">
           <h2 className="text-3xl font-bold text-[#37372f] text-center">Register</h2>
-
-          {/* Use form here */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">           
             <div>
               <label className="text-sm text-gray-600 font-semibold">Username</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
-                className="p-3 w-full bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
+              <input  type="text"   value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name"   className="p-3 w-full bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"/>
             </div>
 
             <div>
               <label className="text-sm text-gray-600 font-semibold">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                className="p-3 w-full bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+              <input   type="password"  value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter password"  className="p-3 w-full bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
+
 
             <button
               type="submit"

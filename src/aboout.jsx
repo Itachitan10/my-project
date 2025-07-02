@@ -13,7 +13,7 @@ const About = () => {
             my <span className='text-[yellow]'>ramen shop</span>
           </h1>
 
-          {/* Hamburger button */}
+        
           <button
             onClick={() => setIsOpen(!isOpen)}
             className='md:hidden text-[yellow] focus:outline-none'

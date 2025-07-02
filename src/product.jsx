@@ -1,172 +1,224 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { ShoppingCart, CreditCard } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ShoppingCart } from "lucide-react";
+import { FaShoppingCart } from "react-icons/fa";
 
 const Product = () => {
-  const [navOpen, setNavOpen] = useState(false);
-  const [product1, setProduct] = useState([]);
-  const [Search, setSearch] = useState('');
+  const [cartItems, setCartItems] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [userId, setUserId] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const logout = () => {
+    fetch("http://localhost:4000/logout", {
+      method: "POST",
+      credentials: "include",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Logout error");
+        window.location.href = "http://localhost:3000/login";
+      })
+      .catch(console.error);
+  };
 
   useEffect(() => {
-    fetch('http://localhost:4000/product')
-      .then(res => res.ok ? res.json() : Promise.reject('Network response not ok'))
-      .then(data => setProduct(data.product))
-      .catch(err => console.error('Fetching error:', err));
+    fetch("http://localhost:4000/userId", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : Promise.reject("Failed user ID")))
+      .then((data) => setUserId(data.userId))
+      .catch(console.error);
   }, []);
 
-  const ali = product1.filter((itemsName) =>
-    itemsName.name.toLowerCase().includes(Search.toLowerCase())
-  );
+  const fetchProducts = () => {
+    setLoading(true);
+    fetch("http://localhost:4000/product")
+      .then((res) => (res.ok ? res.json() : Promise.reject("Fetch failed")))
+      .then((data) => {
+        setProducts(data.product);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.toString());
+        setLoading(false);
+      });
+  };
 
- 
-  const notifyAddCart = () => {
+  useEffect(fetchProducts, []);
+
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      cartItems.forEach((item) => {
+        fetch("http://localhost:4000/cartValue", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(item),
+        }).catch(console.error);
+      });
+    }
+  }, [cartItems]);
+
+  const handleAddToCart = (product) => {
+    const item = {
+      id: product.id,
+      user_id: userId,
+      img: product.img,
+      name: product.name.trim(),
+      price: product.price,
+      quantity: 1,
+    };
+    setCartItems((prev) => [...prev, item]);
     toast.success(
       <div className="flex items-center gap-2">
-        <ShoppingCart size={20} /> Item added to cart!
+        <ShoppingCart size={18} /> Added to cart!
       </div>,
       {
         position: "top-right",
         autoClose: 2000,
         theme: "colored",
-        style: {
-          background: '#333',
-          color: '#fff',
-          borderRadius: '8px',
-          padding: '12px 16px',
-        },
-        icon: false
+        icon: false,
       }
     );
   };
 
-  
-  const notifyBuyNow = () => {
-    toast.info(
-      <div className="flex items-center gap-2">
-        <CreditCard size={20} /> Proceeding to checkout!
-      </div>,
-      {
-        position: "top-right",
-        autoClose: 2000,
-        theme: "colored",
-        style: {
-          background: '#444',
-          color: '#fff',
-          borderRadius: '8px',
-          padding: '12px 16px',
-        },
-        icon: false
-      }
-    );
-  };
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
-    <div className="min-h-screen w-screen bg-[#343634]">
+    <div className="min-h-screen bg-[#343634] text-white">
       {/* Navbar */}
-      <div className="bg-[#221f1f]">
-        <nav className="p-3 flex justify-between items-center mx-4 md:mx-20 relative">
-          {/* Logo */}
-          <h1 className="font-bold text-white text-xl md:text-2xl">
-            my <span className="text-[yellow]">ramen shop</span>
+      <header className="bg-[#221f1f]">
+        <nav className="flex items-center justify-between px-4 py-3 max-w-6xl mx-auto relative">
+          <h1 className="text-xl font-bold">
+            my <span className="text-yellow-400">ramen shop</span>
           </h1>
 
-          {/* Toggle Button */}
           <button
-            className="md:hidden text-yellow-400 focus:outline-none"
-            onClick={() => setNavOpen(!navOpen)}
-            aria-label="Toggle menu"
+            className="md:hidden text-yellow-400"
+            onClick={() => setMenuOpen(!menuOpen)}
           >
-            <svg
-              className="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {navOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {menuOpen ? (
+                <path d="M6 18L18 6M6 6l12 12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+                <path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               )}
             </svg>
-          </button>
-
-        
+          </button>git
           <ul
-            className={`md:flex md:flex-row md:gap-2 absolute md:static top-full left-0 w-full md:w-auto bg-[#221f1f] md:bg-transparent text-center overflow-hidden transition-[max-height] duration-300 ease-in-out ${navOpen ? 'max-h-60 md:max-h-full' : 'max-h-0 md:max-h-full'
-              }`}
+            className={`t absolute md:static top-full left-0 w-full md:w-auto bg-[#221f1f] md:flex gap-5 text-yellow-400 font-semibold px-4 md:px-0 py-2 md:py-0 transition-all duration-300 ease-in-out ${
+              menuOpen ? "block" : "hidden md:flex"
+            }`}
           >
-            {['About', 'Contact', 'Product'].map((item, idx) => (
-              <li
-                key={idx}
-                className="text-[yellow] font-bold hover:underline cursor-pointer px-2 py-5 md:py-0"
-                onClick={() => setNavOpen(false)}
-              >
-                <Link to={`/dashboard/${item.toLowerCase()}`}>{item}</Link>
+            {["About", "Contact", "Product"].map((page, idx) => (
+              <li key={idx} className="py-2 md:py-0">
+                <Link to={`/${page.toLowerCase()}`} className="hover:underline block">
+                  {page}
+                </Link>
               </li>
             ))}
+            <li className="py-2 md:py-0">
+              <Link to="/dashboard/cart" className="hover:underline flex items-center gap-1">
+                <FaShoppingCart size={18} /> Cart
+              </Link>
+            </li>
+            <li className="py-2 md:py-0">
+              <button
+                onClick={logout}
+                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full text-sm"
+              >
+                Logout
+              </button>
+            </li>
           </ul>
         </nav>
+      </header>
+
+      {/* Banner */}
+      <div
+        className="w-full h-48 bg-cover bg-center flex items-center justify-center text-3xl font-bold"
+        style={{
+          backgroundImage:
+            "url('https://i.ytimg.com/vi/NpawwQf0tiQ/maxresdefault.jpg')",
+        }}
+      >
+        All Products
       </div>
 
-      <div className="w-full h-64 bg-[url('https://i.ytimg.com/vi/NpawwQf0tiQ/maxresdefault.jpg')] bg-cover bg-center rounded-xl flex items-center justify-center">
-        <h1 className="text-white text-4xl font-bold drop-shadow-lg">All Product</h1>
+      {/* Search */}
+      <div className="px-4 max-w-6xl mx-auto mt-6">
+        <input
+          className="w-full px-4 py-2 border border-yellow-600 bg-transparent rounded text-white placeholder-yellow-300"
+          type="text"
+          placeholder="Search products..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
-     
-      <div className="max-w-5xl mx-auto p-4 space-y-6">
-        <h2 className="text-2xl font-semibold text-white">Product Category</h2>
-
-        <div className="flex gap-4 mb-6">
-          <button className="px-6 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">Coffee</button>
-          <button className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Food</button>
-          <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Ramen</button>
-        </div>
-
-        <div className="flex gap-2 mb-6">
-          <input
-            type="text"
-            placeholder="Search product..."
-            className="flex-1 px-4 py-2 border border-yellow-600 rounded-lg bg-transparent placeholder-yellow-300 text-white font-bold focus:outline-none focus:ring-2 focus:ring-yellow-600"
-            value={Search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">Search</button>
-        </div>
-
-    
-        <div className="flex flex-row flex-wrap gap-10 justify-center">
-          {ali.map((item) => (
-            <div
-              key={item.id}
-              className="flex flex-col text-black transform transition duration-300 hover:scale-105 hover:shadow-xl rounded-2xl overflow-hidden bg-white"
+      {/* Main Content */}
+      <main className="p-4 max-w-6xl mx-auto">
+        {error && (
+          <div className="bg-red-200 text-red-800 p-3 rounded my-4 text-center">
+            Error: {error}
+            <button
+              onClick={fetchProducts}
+              className="ml-4 px-3 py-1 bg-red-600 rounded"
             >
-              <img src={item.img} alt="" className="h-30 w-50 object-cover" />
-              <div className="gap-3 p-2 flex flex-col justify-between h-full">
-                <p className="text-center font-bold text-sm py-2">{item.name}</p>
-                <p className="text-sm text-gray-700 text-center">₱: {item.price}</p>
-                <div className="flex justify-center gap-2 text-sm py-2">
-                  <button onClick={notifyAddCart} className="bg-[green] rounded-2xl w-20 text-white font-sans hover:bg-green-700">Add Cart</button>
-                  <button onClick={notifyBuyNow} className="bg-[yellow] rounded-2xl w-20 font-sans hover:bg-yellow-400">Buy Now</button>
+              Retry
+            </button>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="flex flex-wrap gap-4 justify-center">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="w-[48%] h-48 bg-gray-300 rounded animate-pulse"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-wrap justify-between gap-3">
+            {filteredProducts.length ? (
+              filteredProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="w-[48%] sm:w-[47%] md:w-[30%] bg-white text-black rounded shadow overflow-hidden"
+                >
+                  <div
+                    className="h-28 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${product.img})` }}
+                  />
+                  <div className="p-2 text-center">
+                    <h2 className="text-sm font-semibold truncate">
+                      {product.name}
+                    </h2>
+                    <p className="text-yellow-600 font-bold text-sm mt-1">
+                      ${product.price}
+                    </p>
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      className="mt-2 w-full bg-blue-500 text-white py-1 rounded hover:bg-blue-600 text-sm"
+                    >
+                      Add to Order
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <ToastContainer />
+              ))
+            ) : (
+              <p className="text-center w-full mt-4">No products found.</p>
+            )}
+          </div>
+        )}
+      </main>
+
+      <ToastContainer position="top-right" autoClose={2000} theme="dark" />
     </div>
   );
 };

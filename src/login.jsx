@@ -6,7 +6,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // para hindi mag-reload page
+    e.preventDefault();
 
     if (name === '' || password === '') {
       alert('Please enter both username and password');
@@ -15,6 +15,7 @@ const Login = () => {
 
     fetch('http://localhost:4000/login', {
       method: 'POST',
+       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, password }),
     })
