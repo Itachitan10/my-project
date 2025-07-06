@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const FullVerify = () => {
@@ -6,9 +6,16 @@ const FullVerify = () => {
   const [form, setForm] = useState({
     fullName: '',
     contact: '',
-    email: '',
-    address: ''
+    address: '',
+    userId: '',
   });
+
+  useEffect(() => {
+    fetch("http://localhost:4000/userId", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : Promise.reject("Failed user ID")))
+      .then((data) => setForm((prev) => ({ ...prev, userId: data.userId })))
+      .catch(console.error);
+  }, []);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -32,9 +39,10 @@ const FullVerify = () => {
       console.log('Server response:', data);
 
       if (res.ok) {
-        alert(' Verification successful! Proceeding to checkout...');
-      
+        alert('Verification successful! Proceeding to checkout...');
+        window.location.href = "/dashboard/cart";
       } else {
+        alert(data.message || 'Verification failed.');
       }
     } catch (err) {
       console.error('Error submitting verification:', err);
@@ -105,18 +113,6 @@ const FullVerify = () => {
                 type="tel"
                 name="contact"
                 value={form.contact}
-                onChange={handleChange}
-                className="p-2 rounded w-full text-black bg-amber-50"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold mb-1">Email Address:</label>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
                 onChange={handleChange}
                 className="p-2 rounded w-full text-black bg-amber-50"
                 required

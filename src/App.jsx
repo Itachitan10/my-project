@@ -1,37 +1,41 @@
-import React from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
 import Dash from './dashboard';
-import Home  from './home';
-import About  from './aboout';
+import Home from './home';
+import About from './aboout';
 import Contact from './contact';
 import Login from './login';
-import Register from './register'
-import Product from './product'
+import Register from './register';
+import Product from './product';
 import Display from './display';
 import Cart from './cart';
 import FullVerify from './verify';
-import  AdminDashboard from '../admin/admin_dash'
+import AdminDashboard from '../admin/admin_dash';
+
 const App = () => {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>         
-          <Route path='/dashboard' element={<Dash/>} />
-           <Route path='/dashboard/home' element={<Home/>}/>
-           <Route path='/dashboard/about' element={<About/>}/>
-           <Route path='/dashboard/contact' element={<Contact/>} />
-           <Route path='/login' element={<Login/>} />
-           <Route path='/Register' element={<Register/>} />
-           <Route path='/dashboard/product' element={<Product/>}/>
-           <Route path='/dashboard/cart' element={<Cart/>} />   
-           <Route path='/dashboaard/display' element={<Display/>}/>
-           <Route path='/dashboard/fullVerify' element={<FullVerify/>}/>
-            <Route path='/dashboard/admin' element={<AdminDashboard/>}/>
-         </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Routes>
+        {/* Redirect root "/" to "/dashboard" */}
+        <Route path='/' element={<Navigate to="/dashboard" replace />} />
+
+        <Route path='/dashboard' element={<Dash />} />
+        <Route path='/dashboard/home' element={<Home />} />
+        <Route path='/dashboard/about' element={<About />} />
+        <Route path='/dashboard/contact' element={<Contact />} />
+        <Route path='/dashboard/product' element={<Product />} />
+        <Route path='/dashboard/cart' element={<Cart />} />
+        <Route path='/dashboard/display' element={<Display />} />
+        <Route path='/dashboard/fullVerify' element={<FullVerify />} />
+        <Route path='/dashboard/admin' element={<AdminDashboard />} />
+
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;
-
+  

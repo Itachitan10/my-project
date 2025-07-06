@@ -1,13 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [findItem, setFind] = useState([]);
+  const [full , setfull] = useState()
 
-
-
+  console.log(full);
   
+    useEffect(() => {
+    fetch("http://localhost:4000/getfull", { credentials: "include" })
+      .then((res) => (res.ok ? res.json()
+       : Promise.reject("Failed user ID")))
+      .then((data) =>  setfull(data))
+      .catch(console.error);
+     }, []);
+  function checkout(){
+ const  testing = findItem.find(i=> i.adress  && i.contact && i.fullname)
+ testing ?   fetch("http://localhost:4000/orders", {
+      method: "POST",
+      credentials : "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(findItem)
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Order placed successfully:", data);
+    })  : setTimeout(() => {
+      alert('pls full verify')
+      window.location.href = '/dashboard/fullVerify'
+    }, 1000);
+  }
+
+
   useEffect(() => {
     fetch("http://localhost:4000/cartAllItem", {
       credentials: "include"
@@ -26,9 +52,6 @@ const Dashboard = () => {
               image: i.image,
               price: i.price,
               quantity: i.quantity || 1,
-              fullname : '', 
-               contact : ' ', 
-               adresss :  " ", 
             });
           }
         });
@@ -93,8 +116,6 @@ const Dashboard = () => {
       <li><Link to="/dashboard/contact" className="hover:underline focus:outline-yellow-300">Contact</Link></li>
       <li><Link to="/dashboard/product" className="hover:underline focus:outline-yellow-300">Product</Link></li>
     </ul>
-
-    {/* Mobile hamburger */}
     <button
       onClick={() => setIsOpen(!isOpen)}
       className="md:hidden text-[yellow] p-2 rounded focus:outline-yellow-300 focus:ring-2 focus:ring-yellow-400"
@@ -113,7 +134,6 @@ const Dashboard = () => {
     </button>
   </nav>
 
-  {/* Mobile menu */}
   <ul
     id="mobile-menu"
     className={`md:hidden flex flex-col gap-4 text-[yellow] font-bold text-center py-4 transition-all duration-300 ease-in-out
@@ -176,8 +196,7 @@ const Dashboard = () => {
                         onClick={() => deleteItem(item.id)}
                         className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-800 text-sm"
                         aria-label={`Delete ${item.name} from cart`}
-                      >
-                        Delete
+                      >Delete
                       </button>
                     </div>
                   </td>
@@ -186,22 +205,19 @@ const Dashboard = () => {
             </tbody>
           </table>
         </div>
-
         <div className="bg-[#221f1f] p-8 md:p-10 border rounded-2xl w-full max-w-md h-[500px] shadow shadow-white text-white flex flex-col justify-between">
+        {full && (
           <div className="flex flex-col gap-6 text-lg font-bold text-start">
-            <h4>
-              Fullname: <span className="font-light">Christian</span>
-            </h4>
-            <h4>Contact No:</h4>
-            <h4>Address:</h4>
+            <h4 >Fullname: <span className="font-bold text-yellow-200">{full.fullname}</span></h4>
+            <h4>Contact No: <span className="font-bold text-yellow-200">{full.contact}</span></h4>
+            <h4>Address: <span className="font-bold text-yellow-200">{full.address}</span></h4>
             <h4>Shipping fee: ₱50</h4>
-            <hr className="border-yellow-500" />
-            <h4>
-              Total Cost: <span className="font-light">₱{(totalCost + 50).toFixed(2)}</span>
-            </h4>
+            <hr className="border-yellow-500"/>
+            <h4>Total Cost: <span className="font-bold text-yellow-200">₱{(totalCost + 50).toFixed(2)}</span></h4>
           </div>
+        )}
           <button  className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-6 rounded-full transition"
-           aria-label="Proceed to checkout" >   Check Out
+           aria-label="Proceed to checkout" >Check Out
           </button>
         </div>
       </div>

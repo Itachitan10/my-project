@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import About from './aboout';
 import { FaShoppingCart } from "react-icons/fa";
@@ -21,6 +21,14 @@ const Dashboard = () => {
     .catch(err  => console.error('fetching err', err)
     )
   }
+    useEffect(() => {
+      fetch("http://localhost:4000/userId", { credentials: "include" })
+        .then((res) => (res.ok ? res.json() : setTimeout(() => {
+          window.location.href= '/login'
+        }, 1000))
+      )
+        .catch(console.error)
+    }, []);
   return (
     <div  className="h-screen w-screen bg-[url('https://tse1.mm.bing.net/th/id/OIP.kCZGyPUl02MAYSoGvfTmfwHaEK?rs=1&pid=ImgDetMain')] bg-cover bg-center">
       <div className="bg-[#221f1f]">

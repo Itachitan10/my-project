@@ -28,7 +28,10 @@ const Product = () => {
 
   useEffect(() => {
     fetch("http://localhost:4000/userId", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : Promise.reject("Failed user ID")))
+      .then((res) => (res.ok ? res.json()
+       : setTimeout(() => {
+        window.location.href ='/login'
+       }, 2000)))
       .then((data) => setUserId(data.userId))
       .catch(console.error);
   }, []);
@@ -89,14 +92,12 @@ const Product = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#343634] text-white">
-      {/* Navbar */}
+    <div className="min-h-screen bg-[#343634] text-white items-center text-center" >
       <header className="bg-[#221f1f]">
         <nav className="flex items-center justify-between px-4 py-3 max-w-6xl mx-auto relative">
           <h1 className="text-xl font-bold">
             my <span className="text-yellow-400">ramen shop</span>
           </h1>
-
           <button
             className="md:hidden text-yellow-400"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -108,7 +109,7 @@ const Product = () => {
                 <path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               )}
             </svg>
-          </button>git
+          </button>
           <ul
             className={`t absolute md:static top-full left-0 w-full md:w-auto bg-[#221f1f] md:flex gap-5 text-yellow-400 font-semibold px-4 md:px-0 py-2 md:py-0 transition-all duration-300 ease-in-out ${
               menuOpen ? "block" : "hidden md:flex"
@@ -121,9 +122,9 @@ const Product = () => {
                 </Link>
               </li>
             ))}
-            <li className="py-2 md:py-0">
+            <li className="py-2 md:py-0 flex justify-center">
               <Link to="/dashboard/cart" className="hover:underline flex items-center gap-1">
-                <FaShoppingCart size={18} /> Cart
+                <FaShoppingCart size={17}  /> Cart
               </Link>
             </li>
             <li className="py-2 md:py-0">
