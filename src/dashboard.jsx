@@ -25,7 +25,7 @@ const Dashboard = () => {
       fetch("https://itan-ramen-shop1-1.onrender.com/userId", { credentials: "include" })
         .then((res) => (res.ok ? res.json() : setTimeout(() => {
           window.location.href= '/login'
-        }, 1000))
+        }, 5000))
       )
         .catch(console.error)
     }, []);
