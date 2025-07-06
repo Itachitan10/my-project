@@ -7,13 +7,13 @@ const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   function logout(){ 
     alert('hellow')
-    fetch('http://localhost:4000/logout',{ 
+    fetch('https://itan-ramen-shop1-1.onrender.com/logout',{ 
       method : 'POST', 
       credentials : "include"
     }).then(res => { 
       !res.ok ? ({mess : "logout error"}) :
       setTimeout(() => {
-      window.location.href ='http://localhost:3000/login'   
+      window.location.href ='https://itan-ramen-shop1-1.onrender.com/login'   
       }, 1000);
      
     })
@@ -22,7 +22,7 @@ const Dashboard = () => {
     )
   }
     useEffect(() => {
-      fetch("http://localhost:4000/userId", { credentials: "include" })
+      fetch("https://itan-ramen-shop1-1.onrender.com/userId", { credentials: "include" })
         .then((res) => (res.ok ? res.json() : setTimeout(() => {
           window.location.href= '/login'
         }, 1000))

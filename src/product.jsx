@@ -4,7 +4,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ShoppingCart } from "lucide-react";
 import { FaShoppingCart } from "react-icons/fa";
-
 const Product = () => {
   const [cartItems, setCartItems] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -13,21 +12,20 @@ const Product = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const logout = () => {
-    fetch("http://localhost:4000/logout", {
+    fetch("https://itan-ramen-shop1-1.onrender.com/logout", {
       method: "POST",
       credentials: "include",
     })
       .then((res) => {
         if (!res.ok) throw new Error("Logout error");
-        window.location.href = "http://localhost:3000/login";
+        window.location.href = "https://itan-ramen-shop1-1.onrender.com/login";
       })
       .catch(console.error);
   };
 
   useEffect(() => {
-    fetch("http://localhost:4000/userId", { credentials: "include" })
+    fetch("https://itan-ramen-shop1-1.onrender.com/userId", { credentials: "include" })
       .then((res) => (res.ok ? res.json()
        : setTimeout(() => {
         window.location.href ='/login'
@@ -38,7 +36,7 @@ const Product = () => {
 
   const fetchProducts = () => {
     setLoading(true);
-    fetch("http://localhost:4000/product")
+    fetch("https://itan-ramen-shop1-1.onrender.com/product")
       .then((res) => (res.ok ? res.json() : Promise.reject("Fetch failed")))
       .then((data) => {
         setProducts(data.product);
@@ -55,7 +53,7 @@ const Product = () => {
   useEffect(() => {
     if (cartItems.length > 0) {
       cartItems.forEach((item) => {
-        fetch("http://localhost:4000/cartValue", {
+        fetch("https://itan-ramen-shop1-1.onrender.com/cartValue", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(item),
