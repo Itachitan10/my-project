@@ -9,9 +9,8 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (name && password) {
-      fetch('http://localhost:4000/register', {
+      fetch('https://your-api.onrender.com/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, password }),
