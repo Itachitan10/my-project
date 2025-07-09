@@ -27,7 +27,7 @@ const Login = () => {
       })
       .then(data => {
         alert(`Hello, welcome ${name}!`);
-        window.location.href = 'https://tourmaline-babka-c5b065.netlify.app/dashboard';
+        window.location.href = "https://itansramens.onrender.com/getfull/dashboard"
       })
       .catch(err => {
         alert(err.message);
