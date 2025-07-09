@@ -11,7 +11,7 @@ const FullVerify = () => {
   });
 
   useEffect(() => {
-    fetch("https://itan-ramen-shop1-1.onrender.com/userId", { credentials: "include" })
+    fetch("https://itansramens.onrender.com/userId", { credentials: "include" })
       .then((res) => (res.ok ? res.json() : Promise.reject("Failed user ID")))
       .then((data) => setForm((prev) => ({ ...prev, userId: data.userId })))
       .catch(console.error);
@@ -26,7 +26,7 @@ const FullVerify = () => {
     console.log('Verified data:', form);
 
     try {
-      const res = await fetch("https://itan-ramen-shop1-1.onrender.com/fullVerify", {
+      const res = await fetch("https://itansramens.onrender.com/fullVerify", {
         method: "POST",
         credentials: "include",
         headers: {

@@ -7,13 +7,13 @@ const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   function logout(){ 
     alert('hellow')
-    fetch('https://itan-ramen-shop1-1.onrender.com/logout',{ 
+    fetch('https://itansramens.onrender.com/logout',{ 
       method : 'POST', 
       credentials : "include"
     }).then(res => { 
       !res.ok ? ({mess : "logout error"}) :
       setTimeout(() => {
-      window.location.href ='https://itan-ramen-shop1-1.onrender.com/login'   
+      window.location.href ='https://itansramens.onrender.com/login'   
       }, 1000);
      
     })

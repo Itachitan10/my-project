@@ -13,7 +13,7 @@ const Login = () => {
       return;
     }
 
-    fetch('https://itan-ramen-shop1-1.onrender.com/login', {
+    fetch('https://itansramens.onrender.com/login', {
       method: 'POST',
        credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
@@ -27,7 +27,7 @@ const Login = () => {
       })
       .then(data => {
         alert(`Hello, welcome ${name}!`);
-        window.location.href = '/dashboard';
+        window.location.href = 'https://tourmaline-babka-c5b065.netlify.app/dashboard';
       })
       .catch(err => {
         alert(err.message);

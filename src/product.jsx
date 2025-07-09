@@ -13,19 +13,19 @@ const Product = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const logout = () => {
-    fetch("https://itan-ramen-shop1-1.onrender.com/logout", {
+    fetch("https://itansramens.onrender.com/logout", {
       method: "POST",
       credentials: "include",
     })
       .then((res) => {
         if (!res.ok) throw new Error("Logout error");
-        window.location.href = "https://itan-ramen-shop1-1.onrender.com/login";
+        window.location.href = "https://itansramens.onrender.com/login";
       })
       .catch(console.error);
   };
 
   useEffect(() => {
-    fetch("https://itan-ramen-shop1-1.onrender.com/userId", { credentials: "include" })
+    fetch("https://itansramens.onrender.com/userId", { credentials: "include" })
       .then((res) => (res.ok ? res.json()
        : setTimeout(() => {
         window.location.href ='/login'
@@ -36,7 +36,7 @@ const Product = () => {
 
   const fetchProducts = () => {
     setLoading(true);
-    fetch("https://itan-ramen-shop1-1.onrender.com/product")
+    fetch("https://itansramens.onrender.com/product")
       .then((res) => (res.ok ? res.json() : Promise.reject("Fetch failed")))
       .then((data) => {
         setProducts(data.product);
@@ -53,7 +53,7 @@ const Product = () => {
   useEffect(() => {
     if (cartItems.length > 0) {
       cartItems.forEach((item) => {
-        fetch("https://itan-ramen-shop1-1.onrender.com/cartValue", {
+        fetch("https://itansramens.onrender.com/cartValue", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(item),

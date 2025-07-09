@@ -10,7 +10,7 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (name && password) {
-      fetch('https://itan-ramen-shop1-1.onrender.com/register', {
+      fetch('https://itansramens.onrender.com/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, password }),

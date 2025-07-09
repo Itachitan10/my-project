@@ -8,7 +8,7 @@ const Dashboard = () => {
   console.log(full);
   
     useEffect(() => {
-    fetch("https://itan-ramen-shop1-1.onrender.com/getfull", { credentials: "include" })
+    fetch("https://itansramens.onrender.com/getfull", { credentials: "include" })
       .then((res) => (res.ok ? res.json()
        : Promise.reject("Failed user ID")))
       .then((data) =>  setfull(data))
@@ -16,7 +16,7 @@ const Dashboard = () => {
      }, []);
   function checkout(){
  const  testing = findItem.find(i=> i.adress  && i.contact && i.fullname)
- testing ?   fetch("https://itan-ramen-shop1-1.onrender.com/orders", {
+ testing ?   fetch("https://itansramens.onrender.com/orders", {
       method: "POST",
       credentials : "include",
       headers: {
@@ -35,7 +35,7 @@ const Dashboard = () => {
 
 
   useEffect(() => {
-    fetch("https://itan-ramen-shop1-1.onrender.com/cartAllItem", {
+    fetch("https://itansramens.onrender.com/cartAllItem", {
       credentials: "include"
     })
       .then(res => res.json())
@@ -77,7 +77,7 @@ const Dashboard = () => {
   };
 
   const deleteItem = (id) => {
-    fetch("https://itan-ramen-shop1-1.onrender.com/deleteCartItem", {
+    fetch("https://itansramens.onrender.com/deleteCartItem", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
