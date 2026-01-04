@@ -7,5 +7,9 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: './', // optional pero recommended kung gusto mo ng relative paths
+  base: './',
+  server :{ 
+    port : 3000,
+  }
+ 
 })

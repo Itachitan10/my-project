@@ -10,7 +10,7 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (name && password) {
-      fetch('https://itansramens.onrender.com/register', {
+      fetch('http://localhost:4000/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, password }),

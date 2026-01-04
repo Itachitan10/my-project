@@ -1,228 +1,258 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-const Dashboard = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [findItem, setFind] = useState([]);
-  const [full , setfull] = useState()
+import React from 'react'
+import AOS from 'aos'
+import "aos/dist/aos.css"
+import Footer from '../component/footer';
+import Navbar from '../component/navbar'
+import { useState, useEffect } from 'react';
 
-  console.log(full);
+
+const cart = () => {
+  const [value_cart , set_value_cart] = useState([])
+  const [cart ,setcart] = useState([]);
+  const [userid , setuserid] = useState([]);
+
   
-    useEffect(() => {
-    fetch("https://itansramens.onrender.com/getfull", { credentials: "include" })
-      .then((res) => (res.ok ? res.json()
-       : Promise.reject("Failed user ID")))
-      .then((data) =>  setfull(data))
-      .catch(console.error);
-     }, []);
-  function checkout(){
- const  testing = findItem.find(i=> i.adress  && i.contact && i.fullname)
- testing ?   fetch("https://itansramens.onrender.com/orders", {
-      method: "POST",
-      credentials : "include",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(findItem)
-    })
-    .then(res => res.json())
-    .then(data => {
-      console.log("Order placed successfully:", data);
-    })  : setTimeout(() => {
-      alert('pls full verify')
-      window.location.href = '/dashboard/fullVerify'
-    }, 1000);
-  }
+console.log(cart);
 
+useEffect(() => {
+  const cart_val = [];
 
-  useEffect(() => {
-    fetch("https://itansramens.onrender.com/cartAllItem", {
-      credentials: "include"
-    })
-      .then(res => res.json())
-      .then(data => {
-        const userItem = [];
-        data.forEach(i => {
-          const existing = userItem.find(item => item.id === i.id);
-          if (existing) {
-            existing.quantity += 1;
-          } else {
-            userItem.push({
-              id: i.id,
-              name: i.name,
-              image: i.image,
-              price: i.price,
-              quantity: i.quantity || 1,
-            });
-          }
-        });
-        setFind(userItem);
-      })
-      .catch(err => console.error('Fetching error:', err));
-  }, []);
-
-  const increaseQuantity = (id) => {
-    const updated = findItem.map(item =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    setFind(updated);
-  };
-
-  const decreaseQuantity = (id) => {
-    const updated = findItem.map(item =>
-      item.id === id && item.quantity > 1
-        ? { ...item, quantity: item.quantity - 1 }
-        : item
-    );
-    setFind(updated);
-  };
-
-  const deleteItem = (id) => {
-    fetch("https://itansramens.onrender.com/deleteCartItem", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include",
-      body: JSON.stringify({ id })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          const updated = findItem.filter(item => item.id !== id);
-          setFind(updated);
-        } else {
-          console.error('Failed to delete item:', data.message);
-        }
-      })
-      .catch(err => console.error('Error deleting item:', err));
-  };
-
-  const totalCost = findItem.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  value_cart.forEach(v => {
   
+    const item = cart_val.find(p => p.name === v.name);
 
+    if (item) {
+      item.price += item.quantity * item.real_price
+      item.quantity +=1 ;
+    } else {
+      cart_val.push({
+        id: v.id,
+        name: v.name,
+        price: 0,
+        img: v.image,
+        quantity: 1,
+        real_price : v.price
+     
+      });
+    }
+  });
+
+  setcart(cart_val);
+}, [value_cart]);
+
+  
+  
+  useEffect(()=>{ 
+  fetch('http://localhost:4000/userId',{ 
+    credentials : 'include'
+  })
+  .then((res) => { 
+    if(res.ok){ 
+      return res.json()
+    }
+  }).then((data) => setuserid(data)
+  ).catch((err) => console.error("fething error" ,err))
+ },[])
+
+
+
+
+  useEffect (()=>{ 
+     try{ 
+  fetch('http://localhost:4000/cartAllItem',{
+    credentials : 'include'
+  })
+  .then((res)=>{ 
+    if(res.ok) { 
+      return res.json()
+    } else{ 
+      console.error('no item existing'); 
+    }
+  }).then((data)=>{
+   set_value_cart(data)
+  }).catch((err) => console.error("fetching error" , err))
+
+  }catch(err){ 
+    console.error('fetch has no data' , err)
+    }
+},[])
+
+
+
+  useEffect(()=>{ 
+    AOS.init({duration :2200, 
+      once : false
+    })
+  },[])
+    const links = [
+    { label: "Home", to: "/dashboard" },
+    { label: "Cart", to: "/dashboard/cart" },
+    { label: "Product", to: "/dashboard/product" },
+  ];
   return (
-    <div className="min-h-screen w-screen bg-[url('https://tse1.mm.bing.net/th/id/OIP.kCZGyPUl02MAYSoGvfTmfwHaEK?rs=1&pid=ImgDetMain')] bg-cover bg-center">
-      {/* Navbar */}
-
-<div className="bg-[#221f1f]">
-  <nav className="p-4 flex justify-between items-center mx-4 md:mx-20">
-    <h1 className="font-bold text-white text-2xl">
-      my <span className="text-[yellow]">ramen shop</span>
-    </h1>
-
-    {/* Desktop menu */}
-    <ul className="hidden md:flex flex-row gap-5 text-[yellow] font-bold">
-      <li><Link to="/dashboard/about" className="hover:underline focus:outline-yellow-300">About</Link></li>
-      <li><Link to="/dashboard/contact" className="hover:underline focus:outline-yellow-300">Contact</Link></li>
-      <li><Link to="/dashboard/product" className="hover:underline focus:outline-yellow-300">Product</Link></li>
-    </ul>
-    <button
-      onClick={() => setIsOpen(!isOpen)}
-      className="md:hidden text-[yellow] p-2 rounded focus:outline-yellow-300 focus:ring-2 focus:ring-yellow-400"
-      aria-label="Toggle menu"
-      aria-expanded={isOpen}
-      aria-controls="mobile-menu"
-      type="button"
-    >
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        {isOpen ? (
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        ) : (
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        )}
-      </svg>
-    </button>
-  </nav>
-
-  <ul
-    id="mobile-menu"
-    className={`md:hidden flex flex-col gap-4 text-[yellow] font-bold text-center py-4 transition-all duration-300 ease-in-out
-      ${isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}
-  >
-    <li><Link to="/dashboard/about" className="hover:underline focus:outline-yellow-300" onClick={() => setIsOpen(false)}>About</Link></li>
-    <li><Link to="/dashboard/contact" className="hover:underline focus:outline-yellow-300" onClick={() => setIsOpen(false)}>Contact</Link></li>
-    <li><Link to="/dashboard/product" className="hover:underline focus:outline-yellow-300" onClick={() => setIsOpen(false)}>Product</Link></li>
-  </ul>
+    <div>
+    <div data-aos='fade-down'>
+  <Navbar link={links} />
 </div>
 
-      {/* Main content */}
-      <div className="flex flex-col md:flex-row justify-center gap-6 mt-10 px-4 md:px-20">
-        {/* Cart Table */}
-        <div className="flex-1 max-w-full md:max-w-[700px] h-[500px] p-6 md:p-7 shadow shadow-white rounded-2xl bg-[#221f1f] overflow-y-auto">
-          <table className="text-white w-full border-collapse">
-            <thead>
-              <tr className="bg-amber-400">
-                <th className="py-3 px-3">Image</th>
-                <th className="px-2 py-3 text-center">Name</th>
-                <th className="px-2 py-3 text-center">Quantity</th>
-                <th className="px-2 py-3 text-center">Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {findItem.map((item) => (
-                <tr key={item.id}>
-                  <td className="px-5 py-3 text-center">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-[80px] h-[80px] md:w-[100px] md:h-[100px] rounded-full mx-auto object-cover"
-                      loading="lazy"
-                    />
-                  </td>
-                  <td className="px-4 py-3 text-center">{item.name}</td>
-                  <td className="px-4 py-3 text-center">
-                    <div className="flex items-center justify-center gap-2">
-                      <button
-                        onClick={() => increaseQuantity(item.id)}
-                        className="bg-yellow-500 px-2 rounded text-black"
-                        aria-label={`Increase quantity of ${item.name}`}
-                      >
-                        +
-                      </button>
-                      <span aria-live="polite" aria-atomic="true">{item.quantity}</span>
-                      <button
-                        onClick={() => decreaseQuantity(item.id)}
-                        className="bg-yellow-500 px-2 rounded text-black"
-                        aria-label={`Decrease quantity of ${item.name}`}
-                      >
-                        -
-                      </button>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    ₱{(item.price * item.quantity).toFixed(2)}
-                    <div className="mt-2">
-                      <button
-                        onClick={() => deleteItem(item.id)}
-                        className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-800 text-sm"
-                        aria-label={`Delete ${item.name} from cart`}
-                      >Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="bg-[#221f1f] p-8 md:p-10 border rounded-2xl w-full max-w-md h-[500px] shadow shadow-white text-white flex flex-col justify-between">
-        {full && (
-          <div className="flex flex-col gap-6 text-lg font-bold text-start">
-            <h4 >Fullname: <span className="font-bold text-yellow-200">{full.fullname}</span></h4>
-            <h4>Contact No: <span className="font-bold text-yellow-200">{full.contact}</span></h4>
-            <h4>Address: <span className="font-bold text-yellow-200">{full.address}</span></h4>
-            <h4>Shipping fee: ₱50</h4>
-            <hr className="border-yellow-500"/>
-            <h4>Total Cost: <span className="font-bold text-yellow-200">₱{(totalCost + 50).toFixed(2)}</span></h4>
+<div data-aos="fade-left" className="flex justify-center">
+  <div className="hidden md:flex flex-row bg-white rounded-2xl mt-10 w-[85vw] h-[65vh]">
+
+    <div className="w-[80%] mx-auto px-30 my-10">
+      <h1 className="text-xl font-extrabold mb-8">
+        Shopping Cart
+      </h1>
+
+      <ul className="grid grid-cols-4 gap-4 font-semibold pb-3 border-b">
+        <li className="text-left">Product</li>
+        <li className="text-center">Price</li>
+        <li className="text-center">Quantity</li>
+        <li className="text-right">Subtotal</li>
+      </ul>
+
+      {cart.map((items, index) => (
+        <ul
+          key={index}
+          className="grid grid-cols-4 gap-4 items-center pt-6 mt-4 border-b"
+        >
+          <li className="flex items-center gap-4">
+            <img
+              className="w-20 h-20 object-cover rounded-md"
+              src={items.img}
+              alt="product"
+            />
+          </li>
+
+          <li className="text-center font-medium">
+            ₱{items.price}
+          </li>
+
+          <li className="flex justify-center">
+            <div className="flex items-center gap-4 border h-7 px-4 rounded-2xl">
+              <button onClick={() =>setcart({quantity : 0})} className="font-bold">+</button>
+              <p>{items.quantity}</p>
+              <button className="font-bold">-</button>
+            </div>
+          </li>
+
+          <li className="text-right font-semibold">
+            ₱{items.totalprice}
+          </li>
+        </ul>
+      ))}
+    </div>
+
+    <div className="w-xl h-24">
+      <div className="flex justify-center items-center">
+        <div className="shadow-lg border rounded-xl mt-10 px-10 w-[400px] h-[400px]">
+
+          <h2 className="text-lg font-bold pt-8 pb-6">
+            Order Summary
+          </h2>
+
+          <div className="flex justify-between mb-3">
+            <span>Subtotal</span>
+            <span>₱600.00</span>
           </div>
-        )}
-          <button  className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-3 px-6 rounded-full transition"
-           aria-label="Proceed to checkout" >Check Out
+
+          <div className="flex justify-between mb-3">
+            <span>Shipping</span>
+            <span>₱50.00</span>
+          </div>
+
+          <div className="flex justify-between font-semibold border-t pt-4 mt-4">
+            <span>Total</span>
+            <span>₱650.00</span>
+          </div>
+
+          <button className="mt-6 w-full bg-black text-white py-3 rounded-xl font-semibold">
+            CHECKOUT
           </button>
+
         </div>
       </div>
     </div>
-  );
-};
 
-export default Dashboard;
+  </div>
+</div>
+
+    <div >
+
+
+
+
+  <div className="md:hidden min-h-screen bg-gray-100 flex justify-center p-4">
+
+   {cart.map((itm, index) => (
+     <div key={index} className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-4 flex flex-col"> <h1 className="text-xl font-bold mb-4">CART</h1>
+    <div className="border rounded-xl p-3 mb-4">
+       <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center gap-2">
+
+          
+        <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-bold">U</div>
+          
+       <div>
+            <p className="font-semibold">user</p>
+            <p className="text-xs text-gray-500">{itm.quantity}items</p>
+          </div>
+        </div>
+        <p className="font-semibold">$596.00</p>
+        </div>
+
+        {/* Item 2 */}
+         <div className="flex gap-3">
+         <img
+              className="w-18 h-20 object-cover rounded-md"
+              src={itm.img}
+              alt="product"
+            />
+        <div className="flex-1">
+          <p className="font-semibold">Kake Mock Pullover</p>
+          <p className="text-sm text-gray-500">Color: Dark Blue</p>
+          <p className="text-sm text-gray-500">Size: M</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="w-7 h-7 rounded-full bg-gray-200">-</button>
+          <span>2</span>
+          <button className="w-7 h-7 rounded-full bg-gray-200">+</button>
+        </div>
+      </div>
+    </div>
+
+    {/* FENDI */}
+    <div className="border rounded-xl p-3 mb-20">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-yellow-400 text-black flex items-center justify-center text-sm font-bold">F</div>
+          <div>
+            <p className="font-semibold">Christian</p>
+            <p className="text-xs text-gray-500">{itm.quantity} items</p>
+          </div>
+        </div>
+        <p className="font-semibold">${itm.price}</p>
+      </div>
+    </div>
+
+    {/* CHECKOUT */}
+    <div className=" fixed bottom-16 left-0 right-0 px-4">
+      <button className="w-full max-w-sm mx-auto bg-black text-white py-3 rounded-xl font-semibold block">
+        CHECKOUT
+      </button>
+    </div>
+
+  
+  </div>
+     ))}
+
+</div>
+    </div>
+    <Footer/>
+    </div>
+  )
+
+}
+
+
+export default cart
+

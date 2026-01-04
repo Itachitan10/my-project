@@ -1,223 +1,190 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { ShoppingCart } from "lucide-react";
-import { FaShoppingCart } from "react-icons/fa";
+// Product.jsx
+import React, { useState, useEffect } from "react";
+import Navbar from "../component/navbar";
+import Footer from "../component/footer";
+import AOS from 'aos'; 
+import 'aos/dist/aos.css';
 const Product = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [products, setProducts] = useState([]);
-  const [userId, setUserId] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const logout = () => {
-    fetch("https://itansramens.onrender.com/logout", {
-      method: "POST",
+  const [allcategory, setallcartegory] = useState("all");
+  const [userId, setuserid] = useState([]); 
+  
+  
+    //  for Animation scroling
+      useEffect(()=>{ 
+        AOS.init({duration  : 800 , 
+          once : false
+        })
+      },[])
+      useEffect(() => {    
+          AOS.refresh();
+      }, []);
+  
+      // users_Id
+  useEffect(()=>{
+    fetch('http://localhost:4000/userId', {credentials : 'include'})
+     .then((res) => {
+      if(res.ok){
+        return res.json() 
+      }else{ 
+        // window.location.href='/login'
+      }
+     })
+    .then((data) => setuserid(data))
+    .catch((err) => console.error('fetching error', err))
+  },[])
+ 
+
+
+
+  const addcart = (user_values_cart) => { 
+  
+    
+  if(!user_values_cart) return;
+  
+  fetch('http://localhost:4000/cartValue', {
+    credentials : 'include',
+    method: 'POST', 
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user_values_cart),
+  })
+  .then(res => res.json())  // return json() para sa next then
+  .then(data => console.log(data))
+  .catch(err => console.error('fetching error', err));
+};
+  
+//   // addcart button
+//    const tempo = [];
+
+// const addcart = (targets) => { 
+//   console.log("Before adding:", tempo);
+
+//   targets.forEach((itm) => { 
+//     const existing = tempo.find((values) => values.name === itm.name);
+
+//     if(existing){ 
+//       // Increment quantity at update total price
+//       existing.quantity++;
+//       existing.totalprice = existing.quantity * existing.price;
+//     } else { 
+//       // Add new item with initial quantity 1
+//       tempo.push({ ...itm, quantity: 1, totalprice: itm.price });
+//     }
+//   }
+// );
+
+//   console.log("After processing:", tempo);
+
+//   fetch('http://localhost:4000/cartValue', {
+//     method: 'POST', 
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(tempo),
+//   })
+//   .then(res => res.json())  // return json() para sa next then
+//   .then(data => console.log('Server response:', data))
+//   .catch(err => console.error('Fetching error:', err));
+// };
+
+// ;
+
+
+
+
+  const fillter =  allcategory === "all"   ? products : products.filter((items) => items.category === allcategory );
+  
+  const links = [
+      { label: "Home", to: "/dashboard" },
+    { label: "Cart", to: "/dashboard/cart" },
+    { label: "Dashboard", to: "/dashboard" },
+  ];
+
+  // CHOICE BUTTONS — UPDATED COLORS (only colors changed)
+  const choice = [
+    {  buttons: "all",   color:"p-1 w-20 rounded-2xl font-sans border border-[#020826] text-[#020826] hover:bg-[#020826] hover:text-[#fffffe] hover:duration-300",  },
+    {  buttons: "Ramen",color: "p-1 w-20 rounded-2xl font-sans border border-[#020826] text-[#020826] hover:bg-[#020826] hover:text-[#fffffe] hover:duration-300", },
+     { buttons: "Coffee", color: "p-1 w-20 rounded-2xl font-sans border border-[#020826] text-[#020826] hover:bg-[#020826] hover:text-[#fffffe] hover:duration-300", },
+  ];
+
+
+  useEffect(() => {
+    fetch("http://localhost:4000/product", {
+      method: "GET",
       credentials: "include",
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Logout error");
-        window.location.href = "https://itansramens.onrender.com/login";
-      })
-      .catch(console.error);
-  };
-
-  useEffect(() => {
-    fetch("https://itansramens.onrender.com/userId", { credentials: "include" })
-      .then((res) => (res.ok ? res.json()
-       : setTimeout(() => {
-        window.location.href ='/login'
-       }, 2000)))
-      .then((data) => setUserId(data.userId))
-      .catch(console.error);
-  }, []);
-
-  const fetchProducts = () => {
-    setLoading(true);
-    fetch("https://itansramens.onrender.com/product")
-      .then((res) => (res.ok ? res.json() : Promise.reject("Fetch failed")))
+      .then((res) => res.json())
       .then((data) => {
-        setProducts(data.product);
-        setLoading(false);
+        if (Array.isArray(data)) {
+          setProducts(data);
+        } else {
+          console.error("Unexpected response format", data);
+          setProducts([]);
+        }
       })
       .catch((err) => {
-        setError(err.toString());
-        setLoading(false);
+        console.error("Fetching error", err);
+        setProducts([]);
       });
-  };
-
-  useEffect(fetchProducts, []);
-
-  useEffect(() => {
-    if (cartItems.length > 0) {
-      cartItems.forEach((item) => {
-        fetch("https://itansramens.onrender.com/cartValue", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(item),
-        }).catch(console.error);
-      });
-    }
-  }, [cartItems]);
-
-  const handleAddToCart = (product) => {
-    const item = {
-      id: product.id,
-      user_id: userId,
-      img: product.img,
-      name: product.name.trim(),
-      price: product.price,
-      quantity: 1,
-    };
-    setCartItems((prev) => [...prev, item]);
-    toast.success(
-      <div className="flex items-center gap-2">
-        <ShoppingCart size={18} /> Added to cart!
-      </div>,
-      {
-        position: "top-right",
-        autoClose: 2000,
-        theme: "colored",
-        icon: false,
-      }
-    );
-  };
-
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#343634] text-white items-center text-center" >
-      <header className="bg-[#221f1f]">
-        <nav className="flex items-center justify-between px-4 py-3 max-w-6xl mx-auto relative">
-          <h1 className="text-xl font-bold">
-            my <span className="text-yellow-400">ramen shop</span>
-          </h1>
-          <button
-            className="md:hidden text-yellow-400"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {menuOpen ? (
-                <path d="M6 18L18 6M6 6l12 12" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              ) : (
-                <path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              )}
-            </svg>
-          </button>
-          <ul
-            className={`t absolute md:static top-full left-0 w-full md:w-auto bg-[#221f1f] md:flex gap-5 text-yellow-400 font-semibold px-4 md:px-0 py-2 md:py-0 transition-all duration-300 ease-in-out ${
-              menuOpen ? "block" : "hidden md:flex"
-            }`}
-          >
-            {["About", "Contact", "Product"].map((page, idx) => (
-              <li key={idx} className="py-2 md:py-0">
-                <Link to={`/${page.toLowerCase()}`} className="hover:underline block">
-                  {page}
-                </Link>
-              </li>
-            ))}
-            <li className="py-2 md:py-0 flex justify-center">
-              <Link to="/dashboard/cart" className="hover:underline flex items-center gap-1">
-                <FaShoppingCart size={17}  /> Cart
-              </Link>
-            </li>
-            <li className="py-2 md:py-0">
-              <button
-                onClick={logout}
-                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-full text-sm"
-              >
-                Logout
-              </button>
-            </li>
-          </ul>
-        </nav>
-      </header>
-
-      {/* Banner */}
-      <div
-        className="w-full h-48 bg-cover bg-center flex items-center justify-center text-3xl font-bold"
-        style={{
-          backgroundImage:
-            "url('https://i.ytimg.com/vi/NpawwQf0tiQ/maxresdefault.jpg')",
-        }}
-      >
+    <div className="min-h-screen flex flex-col bg-[#f9f4ef] text-[#020826] font-sans">
+      
+      <div data-aos="fade-down">
+      <Navbar  link={links} />
+      </div>
+      <div data-aos="fade-up" className="h-20 flex items-center justify-center text-3xl font-semibold text-[#020826] border-b border-[#eaddcf]">
         All Products
       </div>
 
-      {/* Search */}
-      <div className="px-4 max-w-6xl mx-auto mt-6">
-        <input
-          className="w-full px-4 py-2 border border-yellow-600 bg-transparent rounded text-white placeholder-yellow-300"
-          type="text"
-          placeholder="Search products..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      {/* Main Content */}
-      <main className="p-4 max-w-6xl mx-auto">
-        {error && (
-          <div className="bg-red-200 text-red-800 p-3 rounded my-4 text-center">
-            Error: {error}
+      <div data-aos='fade-right' className="px-10 py-5 flex justify-center gap-5">
+        {choice.map((buttons1, index) => (
+          <div key={index}>
             <button
-              onClick={fetchProducts}
-              className="ml-4 px-3 py-1 bg-red-600 rounded"
+              onClick={() => setallcartegory(buttons1.buttons)}
+              className={buttons1.color}
             >
-              Retry
+              {buttons1.buttons}
             </button>
           </div>
-        )}
+        ))}
+      </div>
 
-        {loading ? (
-          <div className="flex flex-wrap gap-4 justify-center">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="w-[48%] h-48 bg-gray-300 rounded animate-pulse"
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-wrap justify-between gap-3">
-            {filteredProducts.length ? (
-              filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="w-[48%] sm:w-[47%] md:w-[30%] bg-white text-black rounded shadow overflow-hidden"
-                >
-                  <div
-                    className="h-28 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${product.img})` }}
-                  />
-                  <div className="p-2 text-center">
-                    <h2 className="text-sm font-semibold truncate">
-                      {product.name}
-                    </h2>
-                    <p className="text-yellow-600 font-bold text-sm mt-1">
-                      ${product.price}
-                    </p>
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="mt-2 w-full bg-blue-500 text-white py-1 rounded hover:bg-blue-600 text-sm"
-                    >
-                      Add to Order
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-center w-full mt-4">No products found.</p>
-            )}
-          </div>
-        )}
+      <main className="items-center flex justify-center">
+        <div  data-aos='fade-down' className="grid grid-cols-2 md:grid-cols-3 gap-5">
+          {fillter.map((p, index) => (
+            <div  key={index} className="border border-[#eaddcf] p-3 rounded-2xl shadow bg-[#fffffe]">
+              <img alt="preview" className="rounded-2xl md:w-40 h-45" src={p.img} />
+              <h6 className="mt-4 flex justify-center font-semibold text-[#020826]"> ${p.price.toFixed(1)}
+                <span className="font-light pl-5 text-sm text-[#716040]">stock/0 </span>
+              </h6>
+
+              <p className="pt-2 m-4 flex justify-center text-[#716040]">
+                {p.name}
+              </p>
+
+              <div className="flex flex-row gap-3 justify-center">
+                <button onClick={() => addcart({...p , user_Id:userId.userId, quantity : 1 })} className="w-20 h-10 rounded-xl border border-[#020826] hover:bg-[#020826] hover:text-[#fffffe] hover:duration-300"> add cart
+                </button>
+                <button
+                   className="w-20 h-10 rounded-xl border border-[#020826] hover:bg-[#020826] hover:text-[#fffffe] hover:duration-300">
+                  checkout
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </main>
+         <style>{`@keyframes scroll-left { 
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        } .carousel-track {
+           animation: scroll-left 30s linear infinite;
+           will-change: transform;
+          }
+        `}</style>
 
-      <ToastContainer position="top-right" autoClose={2000} theme="dark" />
+      <div data-aos="fade-up"><Footer /></div>
+     
     </div>
   );
 };
