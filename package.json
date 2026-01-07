@@ -1,0 +1,40 @@
+{
+  "name": "react",
+  "version": "1.0.0",
+  "description": "\"# ramen-shop\"",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "body-parser": "^2.2.0",
+    "buffer": "^6.0.3",
+    "cookie": "^1.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
+    "multer": "^2.0.2",
+    "mysql": "^2.18.1",
+    "mysqli": "^3.1.4",
+    "node-localstorage": "^3.0.5",
+    "nodemon": "^3.1.10",
+    "path": "^0.12.7",
+    "paymongo-node": "^10.17.0",
+    "pg": "^8.16.3",
+    "python": "^0.0.4",
+    "session": "^0.1.0",
+    "socket.io": "^4.8.1",
+    "storage": "^0.2.0",
+    "tailwind": "^2.3.1"
+  },
+  "keywords": []
+}
