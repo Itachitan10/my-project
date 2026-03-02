@@ -4,7 +4,7 @@ const cors = require('cors');
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 
-
+  
 app.use(express.json());
 app.use('/upload', express.static('upload'));
 
@@ -29,21 +29,24 @@ app.use(session({
 
 
 
+const checkout = require("./routes/insert")
 const paymongo = require('./routes/paymongo')
 const login = require('./routes/login');
 const register = require('./routes/register');
 const product = require('./routes/product');
-const cart = require('./routes/cart');
+
 const fullVerify = require('./routes/verefy');
 const deletefiles = require('./routes/delete')
+const retrive = require('./routes/retrive')
 
+
+app.use('/', retrive)
 app.use('/', deletefiles)
 app.use('/', login);
 app.use('/', register);
 app.use('/', product); 
-app.use('/', cart);
 app.use('/', fullVerify);
-
+app.use('/', checkout)
 app.use('/'  ,paymongo)
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
