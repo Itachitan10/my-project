@@ -9,8 +9,9 @@ app.use(express.json());
 app.use('/upload', express.static('upload'));
 
 
+const F_PORT = process.env.F_PORT || 3000
 app.use(cors({
-  origin: ['http://localhost:3000', "tangerine-pixie-30405b.netlify.app"],
+  origin: [`http://localhost:${F_PORT}`],
   credentials : true,
 }));
 app.use(express.json());
@@ -30,7 +31,7 @@ app.use(session({
 
 
 const checkout = require("./routes/insert")
-const paymongo = require('./routes/paymongo')
+// const paymongo = require('./routes/paymongo')
 const login = require('./routes/login');
 const register = require('./routes/register');
 const product = require('./routes/product');
@@ -47,9 +48,9 @@ app.use('/', register);
 app.use('/', product); 
 app.use('/', fullVerify);
 app.use('/', checkout)
-app.use('/'  ,paymongo)
-const port = process.env.PORT || 4000;
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+// app.use('/'  ,paymongo)
 
+const PORT  = process.env.PORT || 4000
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
