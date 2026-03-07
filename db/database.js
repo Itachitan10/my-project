@@ -1,25 +1,22 @@
 // db/database.js
 const mysql = require('mysql');
 
+
+
+const host = process.env.DB_HOST;
+const username = process.env.DB_USER;
+const database = process.env.DB_NAME;
+const password = process.env.DB_PASSWORD;
+const port = process.env.DB_PORT;
+
+
 const conn = mysql.createConnection({
-  host: "localhost",   
-  user: "root",         
-  password: "",          
-  database: "coffiedb",  
-  
-});
-
-
-
-// const conn = mysql.createConnection({
-//   host: "u3yjji.h.filess.io",
-//   user: "coffiedb_handskill",
-//   password: "657fa7b10405c32005013c43572c1b7656feeed0",
-//   database: "coffiedb_handskill",
-//   port: 3306
-// })
-
-
+  host: host,
+  user: username,
+  password: password,
+  database: database,
+  port: port
+}); 
 
 conn.connect((err) => {
   if (err) {
@@ -39,3 +36,15 @@ module.exports = (query, values = []) => {
     });
   });
 };
+
+
+
+
+
+// const conn = mysql.createConnection({
+//   host: "localhost",   
+//   user: "root",         
+//   password: "",          
+//   database: "coffiedb",  
+  
+// });

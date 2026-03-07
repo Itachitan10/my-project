@@ -3,7 +3,7 @@ const app = express();
 const cors = require('cors');
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-
+require('dotenv').config()
   
 app.use(express.json());
 app.use('/upload', express.static('upload'));
@@ -31,14 +31,14 @@ app.use(session({
 
 
 const checkout = require("./routes/insert")
-// const paymongo = require('./routes/paymongo')
+const paymongo = require('./routes/paymongo')
 const login = require('./routes/login');
 const register = require('./routes/register');
 const product = require('./routes/product');
 
 const fullVerify = require('./routes/verefy');
 const deletefiles = require('./routes/delete')
-const retrive = require('./routes/retrive')
+const retrive = require('./routes/retrive');
 
 
 app.use('/', retrive)
@@ -48,9 +48,12 @@ app.use('/', register);
 app.use('/', product); 
 app.use('/', fullVerify);
 app.use('/', checkout)
-// app.use('/'  ,paymongo)
+app.use('/' , paymongo)
 
 const PORT  = process.env.PORT || 4000
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
+
+
