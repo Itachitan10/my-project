@@ -8,8 +8,7 @@ require("dotenv").config();
 app.use(express.json());
 app.use("/upload", express.static("upload"));
 
-const F_PORT = process.env.FRONT_URL
-// const F_PORT = "http://localhost:3000";
+const F_PORT = process.env.FRONT_URL ||  "http://localhost:3000";
 console.log(F_PORT);
 
 app.use(

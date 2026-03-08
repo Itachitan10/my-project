@@ -16,6 +16,7 @@ const port = process.env.DB_PORT;
   
 // });
 
+
 // CREATE CONNECTION POOL
 const conn = mysql.createPool({
   connectionLimit: 5, // max connections
@@ -47,4 +48,4 @@ module.exports = (query, values = []) => {
 //   password: "",          
 //   database: "coffiedb",  
   
-// });
+// })
