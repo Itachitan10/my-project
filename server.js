@@ -54,7 +54,7 @@ app.use("/", checkout);
 app.use("/", paymongo);
 
 
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 4000
 
 console.log("PORT:", PORT);
 
