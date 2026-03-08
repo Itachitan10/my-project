@@ -5,11 +5,16 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 require('dotenv').config()
   
+
+
 app.use(express.json());
 app.use('/upload', express.static('upload'));
 
 
-const F_PORT = process.env.FRONT_URl || 3000
+const F_PORT = process.env.FRONT_URL 
+// const F_PORT = 3000
+
+
 app.use(cors({
   origin: [`http://localhost:${F_PORT}`],
   credentials : true,
@@ -50,10 +55,9 @@ app.use('/', fullVerify);
 app.use('/', checkout)
 app.use('/' , paymongo)
 
-const PORT  = process.env.VITE_API_URL || 4000
+// Server port (number)
+// const PORT = process.env.VITE_API_URL || 4000;
+ const PORT = 4000 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}/`);
 });
-
-
-
