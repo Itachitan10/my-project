@@ -3,7 +3,7 @@ const routes = express.Router();
 const multer = require("multer");
 const conn = require("../db/database"); 
 
-
+const  VITE_API_UR = process.env.VITE_API_UR
 
 routes.delete('/deleteItem/:id_delete' , async(req , res)=>{
   try{ 
@@ -33,12 +33,11 @@ routes.post('/uploadIMg' , upload.single ('myimg'), async (req, res) =>{
      const {name, price , category , desc}  =req.body;
    
   
-const imgurl = "http://localhost:4000/" + req.file.path.replace(/\\/g, "/");
+const imgurl = VITE_API_UR + req.file.path.replace(/\\/g, "/");
 
-// Correct SQL query
+
 let query = 'INSERT INTO admin_products(name, price, category, description, img) VALUES (?, ?, ?, ?, ?)';
 
-// Values to insert
 let value = [name, price, category, desc, imgurl];
 
 try {

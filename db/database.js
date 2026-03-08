@@ -17,7 +17,7 @@ const port = process.env.DB_PORT;
 // });
 
 
-// CREATE CONNECTION POOL
+// CREATE CONNECTION POOL 
 const conn = mysql.createPool({
   connectionLimit: 5, // max connections
   host: host,
