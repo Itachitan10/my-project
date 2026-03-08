@@ -59,6 +59,6 @@ const PORT = process.env.API_URL || 4000;
 console.log(PORT);
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on ${PORT}`);
 });
 
