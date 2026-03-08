@@ -58,7 +58,7 @@ app.use('/' , paymongo)
 
 
 // Server port (number)
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.API_URL || 4000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
