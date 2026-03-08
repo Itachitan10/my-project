@@ -8,9 +8,8 @@ require("dotenv").config();
 app.use(express.json());
 app.use("/upload", express.static("upload"));
 
-const F_PORT = process.env.FRONT_URL || "http://localhost:3000";
-// const F_PORT = 3000
-console.log(F_PORT);
+const F_PORT = process.env.FRONT_UR
+// const F_PORT = "http://localhost:3000";
 
 app.use(
   cors({
@@ -54,10 +53,7 @@ app.use("/", checkout);
 app.use("/", paymongo);
 
 
-const PORT = process.env.PORT || 4000
-
-console.log("PORT:", PORT);
-
+const PORT = process.env.PORT 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
