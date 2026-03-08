@@ -20,11 +20,6 @@ const database = process.env.DB_NAME;
 const password = process.env.DB_PASSWORD;
 const port = process.env.DB_PORT;
 
-console.log(host);
-console.log(username);
-console.log(database);
-console.log(password);
-console.log(port);
 
 // CREATE CONNECTION POOL
 const pool = mysql.createPool({
