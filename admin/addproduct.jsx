@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+  const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000"
 export default function AddProduct() {
   const [img, setImg] = useState(null);
   const [imgURL, setImgURL] = useState("");
@@ -28,7 +28,7 @@ export default function AddProduct() {
     formData.append("category", category);
     formData.append("desc", desc);
 
-    fetch("http://localhost:4000/uploadIMg", { method: "POST", body: formData })
+    fetch(`${VITE_API_URL}/uploadIMg`, { method: "POST", body: formData })
       .then((res) => res.json())
       .then((data) => data ? window.location.reload() : console.error('error'))
       .catch((err) => console.error("Error:", err));

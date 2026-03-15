@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
-
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const Register = () => {
   const [name, setName] = useState('');
   const [pnumber , setnumber] = useState(0)
@@ -10,7 +10,7 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (name && password) {
-      fetch('http://localhost:4000/register', {
+      fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, password }),

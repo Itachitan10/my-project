@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
 import React, { useState } from 'react'
 import Finalmodal from '../modal/finalmodal'
+const VITE_API_URL = import.meta.env.VITE_API_URL  || "http://localhost:4000"
+console.log(VITE_API_URL)
+
 
 
 const Login = () => {
@@ -16,12 +19,13 @@ const Login = () => {
       return;
     }
 
-    fetch('http://localhost:4000/login', {
-      method: 'POST',
-       credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, password }),
-    })
+
+      fetch(`${VITE_API_URL}/login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, password }),
+      })  
       .then(res => {
         if (!res.ok) {
           throw new Error('Invalid credentials');

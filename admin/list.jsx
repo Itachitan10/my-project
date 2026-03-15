@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Deletemodal from "../modal/deletemodal";
 import Editmodal from "../modal/editmodal";
-
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const List = () => {  
   const [product , setProducts] = useState([]);
   const [deletemodal , setdeletemodal] = useState(null); 
@@ -9,7 +9,7 @@ const List = () => {
   const [currentProduct , setCurrentProduct] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:4000/product", {
+    fetch(`${API_URL}/product`, {
       method: "GET",
       credentials: "include",
     })
@@ -21,7 +21,7 @@ const List = () => {
   const handelete = async () => {
     try {
       const id_delete = currentProduct.id; 
-      await fetch(`http://localhost:4000/deleteItem/${id_delete}`, { method: "DELETE" })
+      await fetch(`${API_URL}/deleteItem/${id_delete}`, { method: "DELETE" })
         .then(res => res.json())
         .then(data => data ? setTimeout(() => { window.location.reload() }, 1000) : console.error("error deleting item"))
         .catch(err => console.error('error', err));

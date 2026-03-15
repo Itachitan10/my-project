@@ -14,8 +14,12 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@material-tailwind/react": "^2.1.10",
+    "@stripe/react-stripe-js": "^5.6.0",
+    "@stripe/stripe-js": "^8.8.0",
     "aos": "^2.3.4",
+    "axios": "^1.13.2",
     "dom": "^0.0.3",
+    "dotenv": "^17.2.3",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.513.0",
     "reac": "^0.0.0",

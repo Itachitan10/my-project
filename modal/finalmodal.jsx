@@ -7,7 +7,7 @@ const Finalmodal = ({ success }) =>{
   if(!success) return
   
   const handleClick = () => { 
-    success === "success" ? window.location.href = '/dashboard' : window.location.href = '/login';
+    success === "success" ? window.location.href = `/dashboard` : window.location.href = `/login`;
   }
 
 

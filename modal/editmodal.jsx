@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import List from "../admin/list";
-
+  const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000"
 const Editmodal = ({editId, img, name,price, category, description}) => {
 
 
@@ -38,9 +38,9 @@ const Editmodal = ({editId, img, name,price, category, description}) => {
     }else{ 
       new_form.append('old_img' , img)
     }
-  
+
    try{ 
-    const res = await fetch("http://localhost:4000/editProduct",{ 
+    const res = await fetch(`${VITE_API_URL}/editProduct`,{ 
       method : 'PUT', 
       body : new_form
     })

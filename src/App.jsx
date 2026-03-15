@@ -15,20 +15,15 @@ import ProceedToCheckout from "./proc_to_checkout"
 import Register_add from "../admin/register_admin";
 import Profile from "./profile";
 import Process from "../admin/process";
-
+import Infomation_conferm from "./infomation_conferm";
 
 // client side
 import Admin_login from "../admin/Admin_login";
 import AdminDashboard from '../admin/admin_dash';
 import Addproduct from "../admin/addproduct";
 
-
-
-
-
-
 import Testing from "../modal/testing";
-
+ 
 
 
 
@@ -37,6 +32,8 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
+
+        <Route path="/dashboard/cart/confimation" element={<Infomation_conferm />} />
         {/* testing */}
         <Route path="/testing" element={< Testing />} />
         {/* admin */} 

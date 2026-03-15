@@ -1,125 +1,141 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from "react";
 
-const ProceedToCheckout = () => {
-  const [cartItems, setCartItems] = useState([]);
-  const [userInfo, setUserInfo] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState("GCash");
-  const [isDarkMode, setIsDarkMode] = useState(false);
+function  ProceedToCheckout() {
+  const [formData, setFormData] = useState({
+    name: "",
+    contact: "",
+    address: "",
+    paymentMethod: "cod", // default COD
+  });
 
-  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
-
-  const theme = isDarkMode ? {
-    bg: "bg-[#2b1e0f]",
-    text: "text-white",
-    card: "bg-[#3e2e16]",
-    button: "bg-yellow-500 hover:bg-yellow-600 text-black"
-  } : {
-    bg: "bg-[#f3e8dc]",
-    text: "text-black",
-    card: "bg-white",
-    button: "bg-yellow-500 hover:bg-yellow-600 text-black"
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  useEffect(() => {
-    // Kukunin ang cart items
-    fetch("http://localhost:4000/cartAllItem", { credentials: "include" })
-      .then(res => res.json())
-      .then(data => setCartItems(data))
-      .catch(err => console.error(err));
-
-    // Kukunin ang user info
-    fetch("http://localhost:4000/getfull", { credentials: "include" })
-      .then(res => res.json())
-      .then(data => setUserInfo(data))
-      .catch(err => console.error(err));
-  }, []);
-
-  const totalCost = cartItems.reduce((acc, item) => acc + item.price * (item.quantity || 1), 0);
-
-  const confirmCheckout = () => {
-    if (!userInfo?.fullname || !userInfo?.contact || !userInfo?.address) {
-      alert("Pakiverify muna ang iyong profile bago mag-checkout.");
-      window.location.href = "/dashboard/fullVerify";
-      return;
-    }
-
-    fetch("http://localhost:4000/orders", {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        items: cartItems,
-        paymentMethod
-      })
-    })
-      .then(res => res.json())
-      .then(data => {
-        alert(`Order placed using ${paymentMethod}`);
-        console.log("Order data:", data);
-      })
-      .catch(err => console.error("Checkout error:", err));
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert(
+      `Thank you ${formData.name}! Your order is ready for ${
+        formData.paymentMethod === "cod" ? "Cash on Delivery" : "Online Payment"
+      }.`
+    );
   };
 
   return (
-    <div className={`min-h-screen w-screen ${theme.bg} ${theme.text}`}>
-      <div className="p-6 md:p-10 flex flex-col items-center gap-8">
-        <h1 className="text-3xl font-bold">Pag-finalize ng Order</h1>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8 space-y-6">
+        <h2 className="text-2xl font-bold text-gray-800 text-center">
+          🛒 Checkout
+        </h2>
+        <p className="text-gray-600 text-center">
+          Please fill in your details and choose your payment method.
+        </p>
 
-        <div className={`w-full max-w-3xl p-6 rounded-xl shadow ${theme.card}`}>
-          <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-          <ul className="space-y-4">
-            {cartItems.map(item => (
-              <li key={item.id} className="flex justify-between border-b pb-2">
-                <span>{item.name} x{item.quantity || 1}</span>
-                <span>₱{(item.price * (item.quantity || 1)).toFixed(2)}</span>
-              </li>
-            ))}
-            <li className="flex justify-between font-semibold pt-2">
-              <span>Shipping Fee</span>
-              <span>₱50.00</span>
-            </li>
-            <li className="flex justify-between font-bold pt-2 border-t mt-2">
-              <span>Total</span>
-              <span>₱{(totalCost + 50).toFixed(2)}</span>
-            </li>
-          </ul>
-        </div>
+        {/* ================= FORM ================= */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Juan Dela Cruz"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500"
+              required
+            />
+          </div>
 
-        <div className={`w-full max-w-3xl p-6 rounded-xl shadow ${theme.card}`}>
-          <h2 className="text-xl font-bold mb-4">Impormasyon ng User</h2>
-          {userInfo ? (
-            <div className="space-y-2">
-              <p><strong>Pangalan:</strong> {userInfo.fullname}</p>
-              <p><strong>Contact:</strong> {userInfo.contact}</p>
-              <p><strong>Address:</strong> {userInfo.address}</p>
+          {/* Contact */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Contact Number
+            </label>
+            <input
+              type="tel"
+              name="contact"
+              value={formData.contact}
+              onChange={handleChange}
+              placeholder="0912-345-6789"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500"
+              required
+            />
+          </div>
+
+          {/* Address */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Full Address
+            </label>
+            <textarea
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="188 Barang Malibong, Urbiztondo, Pangasinan"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+              rows={3}
+              required
+            ></textarea>
+          </div>
+
+          {/* Payment Method */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-1">
+              Payment Method
+            </label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cod"
+                  checked={formData.paymentMethod === "cod"}
+                  onChange={handleChange}
+                  className="accent-red-500"
+                />
+                Cash on Delivery
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="online"
+                  checked={formData.paymentMethod === "online"}
+                  onChange={handleChange}
+                  className="accent-red-500"
+                />
+                Online Payment
+              </label>
             </div>
-          ) : (
-            <p>Kinukuha ang impormasyon...</p>
-          )}
-        </div>
+          </div>
 
-        <div className={`w-full max-w-3xl p-6 rounded-xl shadow ${theme.card}`}>
-          <label className="block font-semibold mb-2">Piliin ang Payment Method:</label>
-          <select
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            className="p-2 w-full rounded border text-black"
-          >
-            <option value="GCash">GCash</option>
-            <option value="Card">Card</option>
-            <option value="PayPal">PayPal</option>
-          </select>
-        </div>
+          {/* Total & Submit */}
+          <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="text-gray-700 font-medium text-lg">
+              Total: <span className="text-red-500">₱650</span>
+            </div>
+            <button
+              type="submit"
+              className="w-full sm:w-auto bg-red-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-red-600 transition"
+            >
+              Place Order
+            </button>
+          </div>
+        </form>
 
-        <button
-          onClick={confirmCheckout}
-          className={`${theme.button} font-bold py-3 px-8 rounded-full transition`}
-        >
-          Confirm Order
-        </button>
+        {/* ================= HUMANIZED MESSAGE ================= */}
+        <p className="text-gray-500 text-sm text-center mt-4">
+          Thank you for ordering from our Ramen Shop! 🍜 We can't wait to serve you.
+        </p>
       </div>
     </div>
   );
-};
+}
+
+
 
 export default ProceedToCheckout;

@@ -1,8 +1,7 @@
-import React from "react";
-import { useState, useEffect } from "react";
-
+import React, { useState } from "react";
+const VITE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000"
 const handleLogout = () => {
-  fetch("http://localhost:4000/logout", {
+  fetch(`${VITE_API_URL}/logout`, {
     method: "POST",
     credentials: "include",
   })
@@ -16,59 +15,64 @@ const handleLogout = () => {
 };
 
 const Navbar = ({ link }) => {
-  const [open, setopen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
-    <div>
-      <nav className="flex items-center justify-between gap-10 p-10 bg-[#f9f4ef] font-bold  shadow-sm">
-       
-        <h2 className="font-extrabold md:text-3xl text-[#020826] ">
-          my <span className="text-[#f25042] ">ramen shop</span>
+    <div className="relative z-50">
+      <nav className="flex items-center justify-between p-6 md:px-10 bg-[#f9f4ef] shadow-md font-bold">
+        {/* Logo */}
+        <h2 className="font-extrabold text-2xl md:text-3xl text-[#020826]">
+          my <span className="text-[#f25042]">ramen shop</span>
         </h2>
 
-        <ul className="hidden md:flex gap-6 mx-15 text-[#020826]">
+        {/* Desktop Links */}
+        <ul className="hidden md:flex items-center gap-8 text-[#020826]">
           {link.map((links, index) => (
-            <li className="hover:underline" key={index}>
-              <a className={links.style} href={links.to}>{links.label}</a>
+            <li
+              key={index}
+              className="relative group text-lg hover:text-[#f25042] transition-colors duration-300"
+            >
+              <a href={links.to}>{links.label}</a>
+              <span className="absolute left-0 bottom-0 w-0 h-[2px] bg-[#f25042] transition-all group-hover:w-full"></span>
             </li>
           ))}
 
-          {/* Logout Button */}
+          
           <li>
             <button
               onClick={handleLogout}
-              className="w-20 rounded-2xl bg-[#8c7851] text-[#fffffe] font-sans hover:bg-[#eaddcf] hover:text-[#020826] duration-300"
+              className="ml-4 px-4 py-2 rounded-full bg-[#8c7851] text-white font-semibold hover:bg-[#f25042] hover:scale-105 transition-all duration-300"
             >
-              logout
+              Logout
             </button>
           </li>
         </ul>
 
-        {/* Hamburger (Phone) */}
+        {/* Mobile Hamburger */}
         <button
-          onClick={() => setopen(!open)}
-          className="w-8 md:hidden text-2xl text-[#020826]"
+          onClick={() => setOpen(!open)}
+          className="md:hidden text-3xl text-[#020826] focus:outline-none"
         >
           {open ? "✖" : "☰"}
         </button>
       </nav>
 
-      {/* MOBILE MENU */}
+      {/* Mobile Menu */}
       {open && (
-        <ul className="font-bold flex flex-col w-screen  gap-3 md:hidden text-lg items-center justify-center py-3 bg-[#f9f4ef] text-[#020826] shadow-md">
+        <ul className="md:hidden flex flex-col items-center gap-4 py-6 bg-[#f9f4ef] shadow-lg absolute w-full left-0 top-full text-[#020826] font-bold text-lg">
           {link.map((links2, index2) => (
-            <li className="hover:underline" key={index2}>
+            <li key={index2} className="hover:text-[#f25042] transition-colors duration-300">
               <a href={links2.to}>{links2.label}</a>
             </li>
           ))}
 
-          {/* Logout Button (Mobile) */}
+          {/* Mobile Logout */}
           <li>
             <button
               onClick={handleLogout}
-              className="w-20 rounded-2xl bg-[#8c7851] text-[#fffffe] font-sans hover:bg-[#eaddcf] hover:text-[#020826] duration-300"
+              className="px-6 py-2 rounded-full bg-[#8c7851] text-white font-semibold hover:bg-[#f25042] hover:scale-105 transition-all duration-300"
             >
-              logout
+              Logout
             </button>
           </li>
         </ul>
